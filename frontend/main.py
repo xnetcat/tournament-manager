@@ -29,7 +29,7 @@ DEFAULT_CONFIG = {
         "name": "player2_name.txt",
         "score": "player2_score.txt",
     },
-    "settings['SERVER']": "http://localhost:8000",
+    "server": "http://localhost:8000",
 }
 
 app = FastAPI()
@@ -59,8 +59,7 @@ host_mode = (
 )
 
 def score_resp(player: int, action: Literal["increment", "decrement"]):
-    resp = requests.post(f"{settings['SERVER']}game/{player}/{action}").json()
-    print(resp)
+    resp = requests.post(f"{settings['server']}game/{player}/{action}").json()
     if resp["success"] == True:
         write_to_file(settings[f"player{player}"]["score"], str(resp[f"player{player}"]["score"]))
 
@@ -71,16 +70,16 @@ def score_resp(player: int, action: Literal["increment", "decrement"]):
     return resp 
 
 def tournament_resp():
-    return requests.get(f"{settings['SERVER']}tournament").json()
+    return requests.get(f"{settings['server']}tournament").json()
 
 def load_resp(url: str):
-    return requests.post(f"{settings['SERVER']}load", params={"url": url}).json()
+    return requests.post(f"{settings['server']}load", params={"url": url}).json()
 
 def load_current_game():
-    return requests.get(f"{settings['SERVER']}current_game").json()
+    return requests.get(f"{settings['server']}current_game").json()
 
 def reset_resp():
-    return requests.post(f"{settings['SERVER']}reset_current_game").json()
+    return requests.post(f"{settings['server']}reset_current_game").json()
 
 def write_to_file(file: str, data: str):
     with open(file, "w") as f:
