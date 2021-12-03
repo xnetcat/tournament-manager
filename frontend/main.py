@@ -1,7 +1,6 @@
 import sys
 import json
 import keyboard
-import fastapi
 import uvicorn
 import requests
 
@@ -9,36 +8,6 @@ from typing import Literal
 from fastapi import FastAPI
 from pathlib import Path
 from fastapi.staticfiles import StaticFiles
-
-SERVER = "http://localhost:8000/" if "--dev" in sys.argv else ""
-
-def score_resp(player: int, action: Literal["increment", "decrement"]):
-    resp = requests.post(f"{SERVER}game/{player}/{action}").json()
-    print(resp)
-    if resp["success"] == True:
-        write_to_file(settings[f"player{player}"]["score"], str(resp[f"player{player}"]["score"]))
-
-        with open(settings[f"player{player}"]["name"], "w+") as f:
-            if f.read() != resp[f"player{player}"]["name"]:
-                f.write(resp[f"player{player}"]["name"])
-    
-    return resp 
-
-def tournament_resp():
-    return requests.get(f"{SERVER}tournament").json()
-
-def load_resp(url: str):
-    return requests.post(f"{SERVER}load", params={"url": url}).json()
-
-def load_current_game():
-    return requests.get(f"{SERVER}current_game").json()
-
-def reset_resp():
-    return requests.post(f"{SERVER}reset_current_game").json()
-
-def write_to_file(file: str, data: str):
-    with open(file, "w") as f:
-        f.write(data)
 
 DEFAULT_CONFIG = {
     "key_bindings": {
@@ -59,7 +28,8 @@ DEFAULT_CONFIG = {
     "player2": {
         "name": "player2_name.txt",
         "score": "player2_score.txt",
-    },    
+    },
+    "settings['SERVER']": "http://localhost:8000",
 }
 
 app = FastAPI()
@@ -87,6 +57,34 @@ host_mode = (
     player1_score_file.exists() and player2_score_file.exists()
     and player1_name_file.exists() and player2_name_file.exists()
 )
+
+def score_resp(player: int, action: Literal["increment", "decrement"]):
+    resp = requests.post(f"{settings['SERVER']}game/{player}/{action}").json()
+    print(resp)
+    if resp["success"] == True:
+        write_to_file(settings[f"player{player}"]["score"], str(resp[f"player{player}"]["score"]))
+
+        with open(settings[f"player{player}"]["name"], "w+") as f:
+            if f.read() != resp[f"player{player}"]["name"]:
+                f.write(resp[f"player{player}"]["name"])
+    
+    return resp 
+
+def tournament_resp():
+    return requests.get(f"{settings['SERVER']}tournament").json()
+
+def load_resp(url: str):
+    return requests.post(f"{settings['SERVER']}load", params={"url": url}).json()
+
+def load_current_game():
+    return requests.get(f"{settings['SERVER']}current_game").json()
+
+def reset_resp():
+    return requests.post(f"{settings['SERVER']}reset_current_game").json()
+
+def write_to_file(file: str, data: str):
+    with open(file, "w") as f:
+        f.write(data)
 
 @app.get("/tournament")
 def read_tournament():
