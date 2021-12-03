@@ -31,7 +31,7 @@ def read_tournament():
 
     return tournament
 
-@app.post("/load")
+@app.post("/tournament/load")
 def load_tournament(url: str):
     """
     Loads a tournament from a given url.
@@ -110,7 +110,19 @@ def change_score(player: Literal["1","2"], action: Literal["increment", "decreme
         }
     }
 
-@app.post("/reset_current_game")
+# Add to queue
+@app.post("/game/add")
+def add_to_queue(game: Game):
+    tournament.queue.append(game)
+    tournament.players.append(game.player1)
+    tournament.players.append(game.player2)
+
+    return {
+        "success": True, 
+        **tournament.dict()
+    }
+
+@app.post("/game/reset")
 def reset_current_game():
     """
     Resets the current game.
@@ -139,7 +151,7 @@ def reset_current_game():
         }
     }
     
-@app.get("/current_game")
+@app.get("/game")
 def get_current_game():
     """
     Returns the current game.
