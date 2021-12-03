@@ -1,2 +1,1 @@
-# score-philip
- 
+# tournament-manager

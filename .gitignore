@@ -1,5 +1,4 @@
-player1.txt
-player2.txt
+*.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

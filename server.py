@@ -1,6 +1,7 @@
 from typing import List, Literal, Optional
 from pydantic import BaseModel
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from bs4 import BeautifulSoup
 import requests
 import re
@@ -62,7 +63,7 @@ def load_tournament(url: str):
     return {"success": True}
 
 @app.post("/game/{player}/{action}")
-def increment_score(player: Literal["1","2"], action: Literal["increment", "decrement"]):
+def change_score(player: Literal["1","2"], action: Literal["increment", "decrement"]):
     """
     Increment or decrement the score of a specified player    
     """
@@ -108,6 +109,35 @@ def increment_score(player: Literal["1","2"], action: Literal["increment", "decr
             "score": current_game.player2_score
         }
     }
+
+@app.post("/reset_current_game")
+def reset_current_game():
+    """
+    Resets the current game.
+    """
+
+    if len(tournament.queue) == 0:
+        return {"success": False, "error": "No games in queue"}
+
+    current_game = tournament.queue[0]
+    current_game.player1_score = 0
+    current_game.player2_score = 0
+    current_game.winner = None
+
+    tournament.queue[0] = current_game
+
+    return {
+        "success": True, 
+        "winner": current_game.winner, 
+        "player1": {
+            "name": current_game.player1.name,
+            "score": current_game.player1_score
+        },
+        "player2": {
+            "name": current_game.player2.name,
+            "score": current_game.player2_score
+        }
+    }
     
 @app.get("/current_game")
 def get_current_game():
@@ -126,3 +156,16 @@ def get_current_game():
         "player1_score": current_game.player1_score, 
         "player2_score": current_game.player2_score
     }
+
+origins = [
+    "http://localhost",
+    "http://localhost:1347",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
