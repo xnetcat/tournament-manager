@@ -1,6 +1,7 @@
 *.txt
 !requirements.txt
 frontend/config.json
+snowpack
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

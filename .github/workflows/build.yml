@@ -19,11 +19,19 @@ jobs:
         python-version: '3.x'
         architecture: 'x64'
 
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+
     - name: Install requirements
       run: pip install -r requirements.txt
 
     - name: Install pyinstaller
       run: pip install pyinstaller
+
+    - name: build frontend
+      working-directory: ./frontend
+      run: npm run build:front
 
     - name: Build the project for Windows
       working-directory: ./frontend
