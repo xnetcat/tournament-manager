@@ -134,7 +134,12 @@ def reset_game():
 
 
 if "--dev" not in sys.argv:
-    app.mount("/", StaticFiles(directory="snowpack", html=True), name="site")
+    if getattr(sys, "frozen", False):
+        import os, sys
+        static_folder = os.path.join(sys._MEIPASS, "snowpack")
+    else:
+        static_folder = "snowpack"
+    app.mount("/", StaticFiles(directory=static_folder, html=True), name="site")
 
 if __name__ == "__main__":
     for key in settings["key_bindings"].keys():
