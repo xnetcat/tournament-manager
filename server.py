@@ -29,12 +29,11 @@ def load_tournament(url: str):
 
     regex = re.compile(r"https\:\/\/play\.toornament.com\/[a-z]+_[A-Z]+\/tournaments\/\w{19}\/stages\/\w{19}\/")
     if not regex.match(url):
-        return {"success": True ,"error": "Invalid URL"}
+        return {"success": False ,"error": "Invalid URL"}
 
     resp = requests.get(url)
     soup = BeautifulSoup(resp.text, "html.parser")
 
-    players = []
     queue = []
     brackets_node = soup.find("div", {"class": "bracket-nodes"})
     if brackets_node is None:
@@ -44,13 +43,10 @@ def load_tournament(url: str):
         if 'position: absolute; left: 0rem;' in div["style"]:
             p1 = Player(name=div.find("div", {"class": "opponent opponent-1"}).find("div", {"class": "name"}).get_text().strip())
             p2 = Player(name=div.find("div", {"class": "opponent opponent-2"}).find("div", {"class": "name"}).get_text().strip())
-            players.append(p1)
-            players.append(p2)
             queue.append(Game(player1=p1, player2=p2))
 
-    tournament.players = players
     tournament.queue = queue
-    return {"success": True}
+    return {"success": True, "queue": queue}
 
 @app.get("/queue")
 def get_queue():

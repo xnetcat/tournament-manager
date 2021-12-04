@@ -21,7 +21,7 @@ class Score extends React.Component<ScoreProps, {}> {
 
     render() {
         return ( 
-            <div className="flex flex-col space-x-5 items-center justify-center text-center" style={{height: "10vh"}}>
+            <div className="text-center space-x-10 flex items-center justify-center" style={{height: "10vh"}}>
                 <Player name={this.props.player1.name} playerNumber={1} onScoreChange={this.props.onScoreChange} />
                 <ScoreHeader player1Score={this.props.player1.score} player2Score={this.props.player2.score}/>
                 <Player name={this.props.player2.name} playerNumber={2} onScoreChange={this.props.onScoreChange} />

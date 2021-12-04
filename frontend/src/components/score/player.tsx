@@ -16,23 +16,23 @@ class Player extends React.Component<PlayerProps, {}> {
             <div className="text-gray-300">
                 {
                     this.props.playerNumber == 1 ?
-                    <div>
-                    <div className="">
-                        <button onClick={() => this.props.onScoreChange("increment", this.props.playerNumber)}>+</button>
-                        <button onClick={() => this.props.onScoreChange("decrement", this.props.playerNumber)}>-</button>
+                    <div className="flex items-center justify-start space-x-5">
+                    <div className="flex items-center justify-center space-x-2">
+                        <button className="text-xl w-7 text-center outline-none border-opacity-50 font-bold rounded-md border-blue-400 border-2" onClick={() => this.props.onScoreChange("increment", this.props.playerNumber)}>+</button>
+                        <button className="text-xl w-7 text-center outline-none border-opacity-50 font-bold rounded-md border-blue-400 border-2" onClick={() => this.props.onScoreChange("decrement", this.props.playerNumber)}>-</button>
                     </div>
-                    <h2 className="">
+                    <h2 className="w-full">
                         {this.props.name}
                     </h2>
                     </div>
                     :
-                    <div>
-                    <h2 className="">
+                    <div className="flex items-start justify-start space-x-5">
+                    <h2 className="w-full">
                         {this.props.name}
                     </h2>
-                    <div className="">
-                        <button onClick={() => this.props.onScoreChange("increment", this.props.playerNumber)}>+</button>
-                        <button onClick={() => this.props.onScoreChange("decrement", this.props.playerNumber)}>-</button>
+                    <div className="flex items-center justify-center space-x-3">
+                        <button className="text-xl w-7 text-center outline-none border-opacity-50 font-bold rounded-md border-blue-400 border-2" onClick={() => this.props.onScoreChange("decrement", this.props.playerNumber)}>-</button>
+                        <button className="text-xl w-7 text-center outline-none border-opacity-50 font-bold rounded-md border-blue-400 border-2" onClick={() => this.props.onScoreChange("increment", this.props.playerNumber)}>+</button>
                     </div>
                     </div>
                 }   

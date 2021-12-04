@@ -43,6 +43,17 @@ class Main extends React.Component<{}, MainState> {
     })
   }
 
+  loadQueue = (url: string) => {
+    axios.post("http://localhost:1347/queue/load", null, {params: {url: url}})
+      .then(res => {
+        if (res.data.success) {
+          this.setState({
+            queue: res.data.queue
+          })
+        }
+      })
+  }
+
   resetQueue = () => {
     axios.post("http://localhost:1347/queue/reset")
       .then(res => {
@@ -77,7 +88,7 @@ class Main extends React.Component<{}, MainState> {
     return (
       <div>
         <Score player1={game.player1} player2={game.player2} onScoreChange={this.updateScore}/>
-        <Queue queue={queue} updateCallback={this.updateQueue} resetCallback={this.resetQueue} />
+        <Queue queue={queue} updateCallback={this.updateQueue} resetCallback={this.resetQueue} loadCallback={this.loadQueue} />
         <Input />
       </div>
     )
