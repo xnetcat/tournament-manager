@@ -134,9 +134,7 @@ def reset_game():
 
 
 if "--dev" not in sys.argv:
-    app.mount("/", StaticFiles(directory="build", html=True), name="site")
-
-
+    app.mount("/", StaticFiles(directory="snowpack", html=True), name="site")
 
 if __name__ == "__main__":
     for key in settings["key_bindings"].keys():

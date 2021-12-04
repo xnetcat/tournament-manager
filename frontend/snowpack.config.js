@@ -13,6 +13,9 @@ module.exports = {
   optimize: {
     bundle: true,
   },
+  buildOptions: {
+    out: './snowpack'
+    },
   devOptions: {
     port: 3000,
   }

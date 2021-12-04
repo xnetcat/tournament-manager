@@ -25,23 +25,23 @@ jobs:
     - name: Install pyinstaller
       run: pip install pyinstaller
 
-    - name: Change dir
-      run: cd frontend
-
     - name: Build the project for Windows
+      working-directory: ./frontend
       if: runner.os == 'Windows'
-      run: pyinstaller -F --add-data "static;static" main.py
+      run: pyinstaller -F --add-data "snowpack;snowpack" main.py
     
     - name: Build the project for Mac
+      working-directory: ./frontend
       if: runner.os == 'macOS'
-      run: pyinstaller -F --add-data "static:static" main.py
+      run: pyinstaller -F --add-data "snowpack:snowpack" main.py
 
     - name: Build the project for Linux
+      working-directory: ./frontend
       if: runner.os == 'Linux'
-      run: pyinstaller -F --add-data "static:static" main.py
+      run: pyinstaller -F --add-data "snowpack:snowpack" main.py
 
     - uses: actions/upload-artifact@v2
       with:
         name: Build ${{ runner.os }}
-        path: dist
+        path: ./frontend/dist
 
