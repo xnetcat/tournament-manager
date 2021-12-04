@@ -6,10 +6,11 @@ import Main from './components/main';
 
 // Render App
 ReactDOM.render(
-  <div className="flex flex-col min-h-screen">
-    <Main />
-  </div>,
-  document.getElementById('root'),
+(<div className="bg-gray-700 h-screen">
+<Main />
+</div>
+)
+, document.getElementById('root'),
 );
 
 if (import.meta.hot) {

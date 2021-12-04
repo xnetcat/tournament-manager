@@ -50,57 +50,45 @@ for key in DEFAULT_CONFIG.keys():
     else:
         settings[key] = config[key]
 
-def update_game_resp(player: int, action: Literal["increment", "decrement"]):
-    resp = requests.post(f"{settings['url']}/game/{player}/{action}").json()
-    if settings["is_host"]:
-        if resp["success"] == True:
-            write_to_file(settings[f"player{player}"]["score"], str(resp[f"player{player}"]["score"]))
 
-            with open(settings[f"player{player}"]["name"], "w+") as f:
-                if f.read() != resp[f"player{player}"]["name"]:
-                    f.write(resp[f"player{player}"]["name"])
-
-    return resp 
-
-def tournament_resp():
-    return requests.get(f"{settings['url']}/tournament").json()
-
-def load_tournament_resp(url: str):
-    return requests.post(f"{settings['url']}/load", params={"url": url}).json()
-
-def game_resp():
-    return requests.get(f"{settings['url']}/game").json()
-
-def reset_game_resp():
-    return requests.post(f"{settings['url']}/game/reset").json()
-
-def write_to_file(file: str, data: str):
-    with open(file, "w") as f:
-        f.write(data)
-
-@app.get("/tournament")
-def read_tournament():
+@app.get("/queue")
+def get_queue():
     """
-    Returns the current tournament.
+    Returns the current queue.
     """
 
-    return tournament_resp()    
+    return requests.get(f"{settings['url']}/queue").json()
 
-@app.post("/tournament/load")
-def load_tournament(url: str):
-    """
-    Loads a tournament from a given url.
-    """
 
-    return load_tournament_resp(url)
-
-@app.post("/game/{player}/{action}")
-def update_game(player: int, action: Literal["increment", "decrement"]):
+@app.post("/queue/load")
+def load_queue(url: str):
     """
-    Increment or decrement the score of a specified player    
+    Loads a queue from a given url.
     """
 
-    return update_game(player, action).json()
+    return requests.post(f"{settings['url']}/queue/load", params={"url": url}).json()
+
+
+@app.post("/queue/add")
+def add_game(player1Name: str, player2Name: str):
+    """
+    Adds a new game to queue.
+    """
+
+    return requests.post(f"{settings['url']}/queue/add", params={
+        "player1Name": player1Name,
+        "player2Name": player2Name,
+    }).json()
+
+
+@app.post("/queue/reset")
+def reset_queue():
+    """
+    Resets the queue.
+    """
+
+    return requests.post(f"{settings['url']}/queue/reset").json()
+
 
 @app.get("/game")
 def get_current_game():
@@ -108,8 +96,33 @@ def get_current_game():
     Returns the current game.
     """
 
-    return game_resp()
-    
+    return requests.get(f"{settings['url']}/game").json()
+
+
+@app.post("/game/update/{player}/{action}")
+def update_game(player: int, action: Literal["increment", "decrement"]):
+    """
+    Increment or decrement the score of a specified player    
+    """
+
+    resp = requests.post(
+        f"{settings['url']}/game/update/{player}/{action}").json()
+    if settings["is_host"]:
+        if resp["success"] == True:
+            with open(settings["player{player}"]["score"], "w") as f:
+                f.write(str(resp[f"player{player}"]["score"]))
+
+            with open(settings[f"player{player}"]["name"], "w") as f:
+                f.write(resp[f"player{player}"]["name"])
+
+    return resp
+
+
+@app.post("/game/reset")
+def reset_game():
+    return requests.post(f"{settings['url']}/game/reset").json()
+
+
 if "--dev" not in sys.argv:
     app.mount("/", StaticFiles(directory="build", html=True), name="site")
 else:
@@ -129,10 +142,11 @@ else:
 if __name__ == "__main__":
     for key in settings["key_bindings"].keys():
         if key == "reset":
-            keyboard.add_hotkey(settings["key_bindings"][key], reset_game_resp)
+            keyboard.add_hotkey(settings["key_bindings"][key], reset_game)
             continue
 
         for action in settings["key_bindings"][key].keys():
-            keyboard.add_hotkey(settings["key_bindings"][key][action], update_game_resp, args=(int(key), action))
-          
-    uvicorn.run(app, host="127.0.0.1", port=1347) # type: ignore
+            keyboard.add_hotkey(
+                settings["key_bindings"][key][action], update_game, args=(int(key), action))
+
+    uvicorn.run(app, host="127.0.0.1", port=1347)  # type: ignore

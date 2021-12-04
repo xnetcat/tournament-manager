@@ -8,30 +8,20 @@ import re
 
 class Player(BaseModel):
     name: str
+    score: int
 
 class Game(BaseModel):
     player1: Player
     player2: Player
-    player1_score: int = 0
-    player2_score: int = 0
     winner: Optional[Player] = None
 
 class Tournament(BaseModel):
     queue: List[Game] = []
-    players: List[Player] = []
 
 app = FastAPI()
 tournament = Tournament()
 
-@app.get("/tournament")
-def read_tournament():
-    """
-    Returns the current tournament.
-    """
-
-    return tournament
-
-@app.post("/tournament/load")
+@app.post("/queue/load")
 def load_tournament(url: str):
     """
     Loads a tournament from a given url.
@@ -62,7 +52,47 @@ def load_tournament(url: str):
     tournament.queue = queue
     return {"success": True}
 
-@app.post("/game/{player}/{action}")
+@app.get("/queue")
+def get_queue():
+    """
+    Returns the current queue.
+    """
+
+    return tournament.queue
+
+@app.post("/queue/add")
+def add_to_queue(player1Name: str, player2Name: str):
+    game = Game(player1=Player(name=player1Name), player2=Player(name=player2Name))
+    tournament.queue.append(game)
+
+    return {
+        "success": True, 
+        **tournament.dict()
+    }
+
+@app.post("/queue/reset")
+def reset_queue():
+    tournament.queue = []
+    return {
+        "success": True, 
+        **tournament.dict()
+    }
+
+@app.get("/game")
+def get_current_game():
+    """
+    Returns the current game.
+    """
+
+    if len(tournament.queue) == 0:
+        return {"success": False, "error": "No games in queue"}
+
+    return {
+        "success": True, 
+        **tournament.queue[0].dict()
+    }
+
+@app.post("/game/update/{player}/{action}")
 def change_score(player: Literal["1","2"], action: Literal["increment", "decrement"]):
     """
     Increment or decrement the score of a specified player    
@@ -75,18 +105,18 @@ def change_score(player: Literal["1","2"], action: Literal["increment", "decreme
 
     if player == "1":
         if action == "increment":
-            current_game.player1_score += 1
+            current_game.player1.score += 1
         else:
-            current_game.player1_score -= 1
+            current_game.player1.score -= 1
     elif player == "2":
         if action == "increment":
-            current_game.player2_score += 1
+            current_game.player2.score += 1
         else:
-            current_game.player2_score -= 1
+            current_game.player2.score -= 1
 
-    if current_game.player1_score == 6:
+    if current_game.player1.score == 6:
         current_game.winner = tournament.queue[0].player1
-    elif current_game.player2_score == 6:
+    elif current_game.player2.score == 6:
         current_game.winner = tournament.queue[0].player2
     else:
         current_game.winner = None
@@ -102,24 +132,12 @@ def change_score(player: Literal["1","2"], action: Literal["increment", "decreme
         "winner": current_game.winner, 
         "player1": {
             "name": current_game.player1.name,
-            "score": current_game.player1_score
+            "score": current_game.player1.score
         },
         "player2": {
             "name": current_game.player2.name,
-            "score": current_game.player2_score
+            "score": current_game.player2.score
         }
-    }
-
-# Add to queue
-@app.post("/game/add")
-def add_to_queue(game: Game):
-    tournament.queue.append(game)
-    tournament.players.append(game.player1)
-    tournament.players.append(game.player2)
-
-    return {
-        "success": True, 
-        **tournament.dict()
     }
 
 @app.post("/game/reset")
@@ -143,32 +161,14 @@ def reset_current_game():
         "winner": current_game.winner, 
         "player1": {
             "name": current_game.player1.name,
-            "score": current_game.player1_score
+            "score": current_game.player1.score
         },
         "player2": {
             "name": current_game.player2.name,
-            "score": current_game.player2_score
+            "score": current_game.player2.score
         }
     }
     
-@app.get("/game")
-def get_current_game():
-    """
-    Returns the current game.
-    """
-
-    if len(tournament.queue) == 0:
-        return {"success": False, "error": "No games in queue"}
-
-    current_game = tournament.queue[0]
-
-    return {
-        "success": True, 
-        "winner": current_game.winner, 
-        "player1_score": current_game.player1_score, 
-        "player2_score": current_game.player2_score
-    }
-
 origins = [
     "http://localhost",
     "http://localhost:1347",
