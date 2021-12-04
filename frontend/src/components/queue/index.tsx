@@ -25,6 +25,7 @@ class Queue extends React.Component<QueueProps, {url: string}> {
     }
 
     urlHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+        event.preventDefault();
         this.setState({url: event.target.value});
     }
 
