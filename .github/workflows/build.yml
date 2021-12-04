@@ -29,6 +29,10 @@ jobs:
     - name: Install pyinstaller
       run: pip install pyinstaller
 
+    - name: install node dependencies
+      working-directory: ./frontend
+      run: npm install
+
     - name: build frontend
       working-directory: ./frontend
       run: npm run build:front
