@@ -53,6 +53,7 @@ def get_queue():
     """
     Returns the current queue.
     """
+    print(tournament.queue)
 
     return tournament.queue
 
