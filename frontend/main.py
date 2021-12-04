@@ -109,7 +109,7 @@ def update_game(player: int, action: Literal["increment", "decrement"]):
         f"{settings['url']}/game/update/{player}/{action}").json()
     if settings["is_host"]:
         if resp["success"] == True:
-            with open(settings["player{player}"]["score"], "w") as f:
+            with open(settings[f"player{player}"]["score"], "w") as f:
                 f.write(str(resp[f"player{player}"]["score"]))
 
             with open(settings[f"player{player}"]["name"], "w") as f:

@@ -5,14 +5,6 @@ import Queue from "./queue"
 import Score from "./score"
 
 type MainState = {
-  player1: {
-    name: string,
-    score: number
-  },
-  player2: {
-    name: string,
-    score: number
-  },
   queue: {
     player1: {
       name: string,
@@ -29,14 +21,6 @@ class Main extends React.Component<{}, MainState> {
   constructor(props: {}) {
     super(props)
     this.state = {
-      player1: {
-        name: "",
-        score: 0,
-      },
-      player2: {
-        name: "",
-        score: 0,
-      },
       queue: []
     }
   }
@@ -54,16 +38,7 @@ class Main extends React.Component<{}, MainState> {
     axios.post(`http://localhost:1347/game/update/${playerNumber}/${action}`)
     .then(res => {
       if (res.data.success) {
-        this.setState({
-          player1: {
-            name: res.data.player1.name,
-            score: res.data.player1.score
-          },
-          player2: {
-            name: res.data.player2.name,
-            score: res.data.player2.score
-          }
-        })
+        this.updateQueue();
       }
     })
   }
@@ -84,11 +59,10 @@ class Main extends React.Component<{}, MainState> {
   };
 
   render() {
-    let game;
-    if (this.state.queue.length > 0) {
-      game = this.state.queue[0]
-    }
-    else {
+    let queue = this.state.queue;
+    let game = queue.shift();
+
+    if (!game) {
       game = {
         player1: {
           name: "",
@@ -103,7 +77,7 @@ class Main extends React.Component<{}, MainState> {
     return (
       <div>
         <Score player1={game.player1} player2={game.player2} onScoreChange={this.updateScore}/>
-        <Queue queue={this.state.queue} updateCallback={this.updateQueue} resetCallback={this.resetQueue} />
+        <Queue queue={queue} updateCallback={this.updateQueue} resetCallback={this.resetQueue} />
         <Input />
       </div>
     )

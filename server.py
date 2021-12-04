@@ -8,7 +8,7 @@ import re
 
 class Player(BaseModel):
     name: str
-    score: int
+    score: int = 0
 
 class Game(BaseModel):
     player1: Player
@@ -67,7 +67,7 @@ def add_to_queue(player1Name: str, player2Name: str):
 
     return {
         "success": True, 
-        **tournament.dict()
+        "queue": tournament.queue
     }
 
 @app.post("/queue/reset")
@@ -114,9 +114,9 @@ def change_score(player: Literal["1","2"], action: Literal["increment", "decreme
         else:
             current_game.player2.score -= 1
 
-    if current_game.player1.score == 6:
+    if current_game.player1.score == 5:
         current_game.winner = tournament.queue[0].player1
-    elif current_game.player2.score == 6:
+    elif current_game.player2.score == 5:
         current_game.winner = tournament.queue[0].player2
     else:
         current_game.winner = None
@@ -125,7 +125,6 @@ def change_score(player: Literal["1","2"], action: Literal["increment", "decreme
 
     if current_game.winner is not None:
         tournament.queue.pop(0)
-        tournament.queue.append(current_game)
 
     return {
         "success": True, 

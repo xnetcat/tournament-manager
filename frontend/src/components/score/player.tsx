@@ -6,42 +6,33 @@ type PlayerProps = {
     onScoreChange: (action: string, playerNumber: number) => void,
 }
 
-type PlayerState = {
-    name: string,
-    playerNumber: number
-}
-
-class Player extends React.Component<PlayerProps, PlayerState> {
+class Player extends React.Component<PlayerProps, {}> {
     constructor(props: PlayerProps | Readonly<PlayerProps>) {
         super(props);
-        this.state = {
-            name: props.name,
-            playerNumber: props.playerNumber,
-        };
     }
 
     render() {
         return (
-            <div className="player">
+            <div className="text-gray-300">
                 {
-                    this.state.playerNumber == 1 ?
+                    this.props.playerNumber == 1 ?
                     <div>
-                    <div className="player-buttons">
-                        <button onClick={() => this.props.onScoreChange("increment", this.state.playerNumber)}>+</button>
-                        <button onClick={() => this.props.onScoreChange("decrement", this.state.playerNumber)}>-</button>
+                    <div className="">
+                        <button onClick={() => this.props.onScoreChange("increment", this.props.playerNumber)}>+</button>
+                        <button onClick={() => this.props.onScoreChange("decrement", this.props.playerNumber)}>-</button>
                     </div>
-                    <div className="player-name">
-                        {this.state.name}
-                    </div>
+                    <h2 className="">
+                        {this.props.name}
+                    </h2>
                     </div>
                     :
                     <div>
-                    <div className="player-name">
-                        {this.state.name}
-                    </div>
-                    <div className="player-buttons">
-                        <button onClick={() => this.props.onScoreChange("increment", this.state.playerNumber)}>+</button>
-                        <button onClick={() => this.props.onScoreChange("decrement", this.state.playerNumber)}>-</button>
+                    <h2 className="">
+                        {this.props.name}
+                    </h2>
+                    <div className="">
+                        <button onClick={() => this.props.onScoreChange("increment", this.props.playerNumber)}>+</button>
+                        <button onClick={() => this.props.onScoreChange("decrement", this.props.playerNumber)}>-</button>
                     </div>
                     </div>
                 }   
