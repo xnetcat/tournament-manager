@@ -145,8 +145,8 @@ def reset_current_game():
         return {"success": False, "error": "No games in queue"}
 
     current_game = tournament.queue[0]
-    current_game.player1_score = 0
-    current_game.player2_score = 0
+    current_game.player1.score = 0
+    current_game.player2.score = 0
     current_game.winner = None
 
     tournament.queue[0] = current_game
