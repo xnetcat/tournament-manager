@@ -30,7 +30,7 @@ DEFAULT_CONFIG = {
         "name": "player2_name.txt",
         "score": "player2_score.txt",
     },
-    "url": "http://localhost:8000",
+    "url": "https://tournament-manager-test.herokuapp.com",
     "is_host": True,
 }
 

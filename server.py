@@ -163,15 +163,10 @@ def reset_current_game():
             "score": current_game.player2.score
         }
     }
-    
-origins = [
-    "http://localhost",
-    "http://localhost:1347",
-]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
