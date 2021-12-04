@@ -26,7 +26,7 @@ class Player extends React.Component<PlayerProps, {}> {
                     </h2>
                     </div>
                     :
-                    <div className="flex items-start justify-start space-x-5">
+                    <div className="flex items-center justify-start space-x-5">
                     <h2 className="w-full">
                         {this.props.name}
                     </h2>
