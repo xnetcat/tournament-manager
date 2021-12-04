@@ -16,12 +16,14 @@ class Input extends React.Component<{}, InputState> {
     };
 
     handlePlayer1Change = (event: React.ChangeEvent<HTMLInputElement>) => {
+        event.preventDefault();
         this.setState({
             player1Name: event.target.value
         });
     };
 
     handlePlayer2Change = (event: React.ChangeEvent<HTMLInputElement>) => {
+        event.preventDefault();
         this.setState({
             player2Name: event.target.value
         });

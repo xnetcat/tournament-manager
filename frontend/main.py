@@ -10,6 +10,8 @@ from pathlib import Path
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
+
+
 DEFAULT_CONFIG = {
     "key_bindings": {
         1: {
@@ -49,6 +51,14 @@ for key in DEFAULT_CONFIG.keys():
         settings[key] = DEFAULT_CONFIG[key]
     else:
         settings[key] = config[key]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['*'],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/queue")
@@ -126,19 +136,7 @@ def reset_game():
 if "--dev" not in sys.argv:
     app.mount("/", StaticFiles(directory="build", html=True), name="site")
 
-origins = [
-    "http://localhost",
-    "http://localhost:3000",
-    "http://localhost:1347",
-]
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 if __name__ == "__main__":
     for key in settings["key_bindings"].keys():
