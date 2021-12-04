@@ -28,9 +28,11 @@ class Main extends React.Component<{}, MainState> {
   updateQueue = () => {
     axios.get("http://localhost:1347/queue")
       .then(res => {
-        this.setState({
-          queue: res.data
-        })
+        if (this.state.queue != res.data) {
+          this.setState({
+            queue: res.data
+          })
+        }
       })
   }
 
@@ -70,8 +72,7 @@ class Main extends React.Component<{}, MainState> {
   };
 
   render() {
-    let queue = this.state.queue;
-    let game = queue.shift();
+    let game = this.state.queue.shift();
 
     if (!game) {
       game = {
@@ -88,7 +89,7 @@ class Main extends React.Component<{}, MainState> {
     return (
       <div>
         <Score player1={game.player1} player2={game.player2} onScoreChange={this.updateScore}/>
-        <Queue queue={queue} updateCallback={this.updateQueue} resetCallback={this.resetQueue} loadCallback={this.loadQueue} />
+        <Queue queue={this.state.queue} updateCallback={this.updateQueue} resetCallback={this.resetQueue} loadCallback={this.loadQueue} />
         <Input />
       </div>
     )
