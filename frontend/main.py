@@ -52,6 +52,8 @@ for key in DEFAULT_CONFIG.keys():
     else:
         settings[key] = config[key]
 
+print(settings)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=['*'],
@@ -67,7 +69,28 @@ def get_queue():
     Returns the current queue.
     """
 
-    return requests.get(f"{settings['url']}/queue").json()
+    resp = requests.get(f"{settings['url']}/queue").json()
+    queue = resp["queue"]
+    if len(queue) == 0:
+        if settings["is_host"] is True:
+            for player in ["1", "2"]:
+                with open(settings[f"player{player}"]["score"], "w") as f:
+                        f.write("")
+
+                with open(settings[f"player{player}"]["name"], "w") as f:
+                    f.write("")
+        return resp
+
+    game = queue[0]
+    if settings["is_host"] is True:
+        for player in ["1", "2"]:
+            with open(settings[f"player{player}"]["score"], "w") as f:
+                f.write(str(game[f"player{player}"]["score"]))
+
+            with open(settings[f"player{player}"]["name"], "w") as f:
+                f.write(game[f"player{player}"]["name"])
+
+    return resp
 
 
 @app.post("/queue/load")
@@ -88,6 +111,16 @@ def add_game(player1Name: str, player2Name: str):
     return requests.post(f"{settings['url']}/queue/add", params={
         "player1Name": player1Name,
         "player2Name": player2Name,
+    }).json()
+
+@app.post("/change_max_score")
+def change_max_score(max_score: int):
+    """
+    Changes the max score.
+    """
+
+    return requests.post(f"{settings['url']}/change_max_score", params={
+        "max_score": max_score,
     }).json()
 
 
@@ -115,33 +148,27 @@ def update_game(player: int, action: Literal["increment", "decrement"]):
     Increment or decrement the score of a specified player    
     """
 
-    resp = requests.post(
+    return requests.post(
         f"{settings['url']}/game/update/{player}/{action}").json()
-    if settings["is_host"]:
-        if resp["success"] == True:
-            with open(settings[f"player{player}"]["score"], "w") as f:
-                f.write(str(resp[f"player{player}"]["score"]))
-
-            with open(settings[f"player{player}"]["name"], "w") as f:
-                f.write(resp[f"player{player}"]["name"])
-
-    return resp
 
 
 @app.post("/game/reset")
 def reset_game():
+    """
+    Resets the current game.
+    """
+
     return requests.post(f"{settings['url']}/game/reset").json()
 
-
-if "--dev" not in sys.argv:
-    if getattr(sys, "frozen", False):
-        import os, sys
-        static_folder = os.path.join(sys._MEIPASS, "snowpack") # type: ignore
-    else:
-        static_folder = "snowpack"
-    app.mount("/", StaticFiles(directory=static_folder, html=True), name="site")
-
 if __name__ == "__main__":
+    if "--dev" not in sys.argv:
+        if getattr(sys, "frozen", False):
+            import os, sys
+            static_folder = os.path.join(sys._MEIPASS, "snowpack") # type: ignore
+        else:
+            static_folder = "snowpack"
+        app.mount("/", StaticFiles(directory=static_folder, html=True), name="site")
+
     for key in settings["key_bindings"].keys():
         if key == "reset":
             keyboard.add_hotkey(settings["key_bindings"][key], reset_game)

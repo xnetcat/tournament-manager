@@ -32,6 +32,11 @@ class Input extends React.Component<{}, InputState> {
     handleSubmit = (event: React.FormEvent<HTMLButtonElement>) => {
         event.preventDefault();
 
+        if (this.state.player1Name === null || this.state.player2Name === null) {
+            alert("Please enter a username for both players");
+            return;
+        }
+
         axios.post("http://localhost:1347/queue/add", null, {
             params: {
                 "player1Name": this.state.player1Name,

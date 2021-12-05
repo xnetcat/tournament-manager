@@ -17,9 +17,16 @@ class Game(BaseModel):
 
 class Tournament(BaseModel):
     queue: List[Game] = []
+    maxScore: int = 5
 
 app = FastAPI()
 tournament = Tournament()
+
+@app.post("/change_max_score")
+def change_max_score(max_score: int):
+    tournament.maxScore = max_score
+
+    return {"success": True, "max_score": max_score}
 
 @app.post("/queue/load")
 def load_tournament(url: str):
@@ -54,7 +61,7 @@ def get_queue():
     Returns the current queue.
     """
 
-    return tournament.queue
+    return tournament
 
 @app.post("/queue/add")
 def add_to_queue(player1Name: str, player2Name: str):
@@ -110,9 +117,9 @@ def change_score(player: Literal["1","2"], action: Literal["increment", "decreme
         else:
             current_game.player2.score -= 1
 
-    if current_game.player1.score == 5:
+    if current_game.player1.score == tournament.maxScore:
         current_game.winner = tournament.queue[0].player1
-    elif current_game.player2.score == 5:
+    elif current_game.player2.score == tournament.maxScore:
         current_game.winner = tournament.queue[0].player2
     else:
         current_game.winner = None

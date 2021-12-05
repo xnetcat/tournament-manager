@@ -15,22 +15,25 @@ type MainState = {
       score: number
     }
   }[],
+  maxScore: number,
 }
 
 class Main extends React.Component<{}, MainState> {
   constructor(props: {}) {
     super(props)
     this.state = {
-      queue: []
+      queue: [],
+      maxScore: 5
     }
   }
 
   updateQueue = () => {
     axios.get("http://localhost:1347/queue")
       .then(res => {
-        if (this.state.queue != res.data) {
+        if (this.state.queue != res.data.queue) {
           this.setState({
-            queue: res.data
+            queue: res.data.queue,
+            maxScore: res.data.maxScore
           })
         }
       })
@@ -72,7 +75,7 @@ class Main extends React.Component<{}, MainState> {
   };
 
   render() {
-    let game = this.state.queue.shift();
+    let game = this.state.queue?.shift() || null;
 
     if (!game) {
       game = {
@@ -88,7 +91,7 @@ class Main extends React.Component<{}, MainState> {
     }
     return (
       <div>
-        <Score player1={game.player1} player2={game.player2} onScoreChange={this.updateScore}/>
+        <Score maxScore={this.state.maxScore} player1={game.player1} player2={game.player2} onScoreChange={this.updateScore}/>
         <Queue queue={this.state.queue} updateCallback={this.updateQueue} resetCallback={this.resetQueue} loadCallback={this.loadQueue} />
         <Input />
       </div>

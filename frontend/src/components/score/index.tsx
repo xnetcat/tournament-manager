@@ -12,6 +12,7 @@ type ScoreProps = {
         score: number
     },
     onScoreChange: (player: string, score: number) => void
+    maxScore: number
 }
 
 class Score extends React.Component<ScoreProps, {}> {
