@@ -95,6 +95,21 @@ def get_current_game():
         **tournament.queue[0].dict()
     }
 
+@app.post("/game/next")
+def next_game():
+    """
+    Removes the current game from the queue.
+    """
+
+    if len(tournament.queue) == 0:
+        return {"success": False, "error": "No games in queue"}
+
+    game = tournament.queue.pop(0)
+    return {
+        "success": True, 
+        "game": game
+    }
+
 @app.post("/game/update/{player}/{action}")
 def change_score(player: Literal["1","2"], action: Literal["increment", "decrement"]):
     """
@@ -118,16 +133,13 @@ def change_score(player: Literal["1","2"], action: Literal["increment", "decreme
             current_game.player2.score -= 1
 
     if current_game.player1.score == tournament.maxScore:
-        current_game.winner = tournament.queue[0].player1
+        current_game.winner = current_game.player1
     elif current_game.player2.score == tournament.maxScore:
-        current_game.winner = tournament.queue[0].player2
+        current_game.winner = current_game.player2
     else:
         current_game.winner = None
 
     tournament.queue[0] = current_game
-
-    if current_game.winner is not None:
-        tournament.queue.pop(0)
 
     return {
         "success": True, 

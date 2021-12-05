@@ -151,6 +151,14 @@ def update_game(player: int, action: Literal["increment", "decrement"]):
     return requests.post(
         f"{settings['url']}/game/update/{player}/{action}").json()
 
+@app.post("/game/next")
+def next_game():
+    """
+    Moves to the next game.
+    """
+
+    return requests.post(f"{settings['url']}/game/next").json()
+
 
 @app.post("/game/reset")
 def reset_game():

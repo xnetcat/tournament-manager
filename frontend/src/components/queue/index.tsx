@@ -54,6 +54,12 @@ class Queue extends React.Component<QueueProps, {}> {
         return;
     }
 
+    nextGame = (event: React.FormEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+
+        axios.post("http://localhost:1347/game/next")
+    }
+
     render() {
         return (
             <div className="flex flex-col justify-between" style={{height: "80vh"}}>
@@ -85,6 +91,7 @@ class Queue extends React.Component<QueueProps, {}> {
                     <button className="h-10 w-32 bg-blue-700 rounded-md border-none" onClick={this.props.resetCallback}>Reset</button>
                     <button className="h-10 w-32 bg-blue-700 rounded-md border-none" onClick={this.clickHandler}>Load</button>
                     <button className="h-10 w-32 bg-blue-700 rounded-md border-none text-sm" onClick={this.changeMaxScore}>Change max score</button>
+                    <button className="h-10 w-32 bg-blue-700 rounded-md border-none text-sm" onClick={this.nextGame}>Next game</button>
                 </div>
             </div>
         );
