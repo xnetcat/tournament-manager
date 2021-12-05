@@ -122,14 +122,14 @@ def change_score(player: Literal["1","2"], action: Literal["increment", "decreme
     current_game = tournament.queue[0]
 
     if player == "1":
-        if action == "increment":
+        if action == "increment" and current_game.player1.score < tournament.maxScore:
             current_game.player1.score += 1
-        else:
+        elif action == "decrement":
             current_game.player1.score -= 1
     elif player == "2":
-        if action == "increment":
+        if action == "increment" and current_game.player2.score < tournament.maxScore:
             current_game.player2.score += 1
-        else:
+        elif action == "decrement":
             current_game.player2.score -= 1
 
     if current_game.player1.score == tournament.maxScore:
