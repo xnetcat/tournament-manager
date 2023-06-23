@@ -1,7 +1,7 @@
 FROM node:slim
 WORKDIR /usr/src/app
 COPY . .
-RUN apt-get update || : && apt-get install python -y
+RUN apt-get update || : && apt-get install python3 -y
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir discord.py uvicorn fastapi bs4 requests pydantic keyboard
 
