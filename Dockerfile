@@ -1,10 +1,12 @@
-FROM python:3
+FROM node:slim
 WORKDIR /usr/src/app
 COPY . .
+RUN apt-get update || : && apt-get install python -y
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir discord.py uvicorn fastapi bs4 requests pydantic keyboard
 
+RUN npm run build
 EXPOSE 1347
 WORKDIR "/usr/src/app/frontend"
-CMD ["main.py"]
-ENTRYPOINT ["python3"]
+CMD ["run start"]
+ENTRYPOINT ["npm"]
