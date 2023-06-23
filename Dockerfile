@@ -4,5 +4,6 @@ COPY . .
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir discord.py uvicorn fastapi bs4 requests pydantic keyboard
 
+EXPOSE 1347
 CMD ["main.py"]
 ENTRYPOINT ["python3"]
