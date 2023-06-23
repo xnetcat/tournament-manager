@@ -23,7 +23,7 @@
     "start:front": "snowpack dev",
     "start:back": "python main.py --dev",
     "build:front": "snowpack build",
-    "build:back": "pyinstaller main.py --add-data build;build -F ",
+    "build:back": "pyinstaller main.py",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint": "eslint \"src/**/*.{ts,tsx}\""
   },
