@@ -1,7 +1,7 @@
 FROM node:slim
 WORKDIR /usr/src/app
 COPY . .
-RUN apt-get update || : && apt-get install python3 -y
+RUN apt-get update || : && apt-get install python3 pyinstaller -y
 WORKDIR "/usr/src/app/frontend"
 RUN npm install
 RUN npm run build
