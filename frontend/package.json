@@ -24,7 +24,6 @@
     "start:back": "python main.py --dev",
     "build:front": "snowpack build",
     "build:back": "pyinstaller main.py --add-data build;build -F ",
-    "postinstall": "is-ci || husky install",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint": "eslint \"src/**/*.{ts,tsx}\""
   },
