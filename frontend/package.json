@@ -18,7 +18,7 @@
   },
   "license": "MIT",
   "scripts": {
-    "start": "npm run start:back",
+    "start": "concurrently --kill-others \"npm run start:front\" \"npm run start:back\"",
     "build": "npm run build:front && npm run build:back",
     "start:front": "snowpack dev",
     "start:back": "python main.py --dev",
