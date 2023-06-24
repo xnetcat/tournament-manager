@@ -9,4 +9,5 @@ WORKDIR "/usr/src/app/frontend"
 RUN npm install
 RUN npm run build
 EXPOSE 1347
-ENTRYPOINT ["npm start"]
+CMD ["start"]
+ENTRYPOINT ["npm"]
