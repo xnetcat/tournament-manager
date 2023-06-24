@@ -1,6 +1,7 @@
 from typing import List, Literal, Optional
 from pydantic import BaseModel
 from fastapi import FastAPI
+import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 from bs4 import BeautifulSoup
 import requests
@@ -190,3 +191,5 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+uvicorn.run(app, host="127.0.0.1", port=1347)  # type: ignore
